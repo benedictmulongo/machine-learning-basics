@@ -1,6 +1,9 @@
 import numpy , random , math
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
+from numpy import *
+import matplotlib
+
 
 A = numpy.concatenate((numpy.random.randn(10,2)*0.2 + [1.5 , 0.5], numpy.random.randn(10,2)*0.2 + [-1.5, 0.5]))
 
@@ -50,12 +53,6 @@ for i in B:
 #ax.scatter(xB,yB, marker='o', s=50, c='red')
 #plt.title('Support Vectors')
 
-plt.figure(1)
-plt.subplot(211)
-plt.plot(xA, yA, 'bo', xB, yB, 'r^')
-
-plt.subplot(212)
-plt.plot(x, y, 'ro')
 #plt.show()
 
 
@@ -66,7 +63,12 @@ def numbers_of_data(data):
     return len(data)
 
  
-data = [[1,1,1],[1,-1,-1],[-1,-1,1],[-1,1,-1]]
+#data = [[1,1,1],[1,-1,-1],[-1,-1,1],[-1,1,-1]]
+#data = [[1,2,-1],[-1,2,-1],[-1,-2,1], [3,1,1]]
+
+
+data = [[3,1,1],[3,-1,1],[6,1,1],[6,-1,1],[1,0,-1],[0,1,-1],[0,-1,-1],[-1,0,-1]]
+#data1 = [[3,1,1],[3,-1,1],[6,1,1],[6,-1,1],[1,0,1],[0,1,1],[0,-1,1],[-1,0,1]]
 #data = [[1,2,-1],[-1,2,-1],[-1,-2,1]]
 
 def calculate_coeffs(data):
@@ -82,14 +84,17 @@ def calculate_coeffs(data):
     s = ""
     for i in range(len(data)):
         for j in range(len(data)):
+            #print("i ", i, " j ", j)
             coefs_u.append(data[i][2]*data[j][2])
             a_u.append(data[i][2]*data[j][2])
             #
             x1.append(data[i][0])
             x1.append(data[i][1])
+            #x1.append(data1[i][2])
             #
             x2.append(data[j][0])
             x2.append(data[j][1])
+            #x2.append(data1[j][2])
             #
             prov = linear_kernel(x1,x2)
             #
@@ -114,8 +119,8 @@ def calculate_coeffs(data):
 
 def linear_kernel(x1,x2):
     #return math.pow(x1[0]*x2[0] + x1[1]*x2[1] + 1, 2)
-    #return x1[0]*x2[0] + x1[1]*x2[1]
-    return math.pow(numpy.dot(x1,x2) + 1, 2)
+    return numpy.dot(x1,x2)
+    #return math.pow(numpy.dot(x1,x2) + 1, 2)
 
 def cal(n):
     for i in range(n):
@@ -168,7 +173,7 @@ def part1_alphas(alphas, data):
     nb_data = numbers_of_data(data)
     sum = 0
     for i in range(nb_data):
-        print("apphas index = ", i)
+        #print("apphas index = ", i)
         sum = sum + alphas[i]
     
     return sum
@@ -225,6 +230,12 @@ def constraint2(x, d = data):
             cons = cons + x[i]*data[j][2]
     return cons
 
+def find_wo(w,index_s = 0):
+    vec = [data[index_s][0], data[index_s][1] ]
+    t = linear_kernel(w,vec)
+    t = -t + ((1/data[index_s][2]))
+    return t
+
 def boundary(y = 1000):
     return [0,y]
 def bounds(C,d = data):
@@ -239,12 +250,12 @@ def bounds(C,d = data):
     return fin   
 cons1 = {'type':'eq','fun':constraint1}
 cons = [cons1]
-x0 = [1,1,1,1]
-bnds = bounds(2)
+x0 = [1,2,1,1,1,5,1,1]
+#x0 = [1,1,1,1]
+bnds = bounds(1000)
 sol = minimize(objective, x0, method = 'SLSQP', bounds = bnds, constraints=cons)
 sol2 = minimize(objective, x0, bounds = bnds, constraints=cons)
 
-    
 print("diag -> ", diag)
 print("not_diag -> ", not_diag)
 print("index -> ", [x + 1 for x in index])
@@ -261,3 +272,72 @@ print("bounds", bounds(5))
 #print("obj reallllly ??? -> ", objective(k,data))
 print("sol -> ", sol.x)
 print("sol 2 -> ", sol2.x)
+print("LENGTH sol 2 -> ", len(sol2.x))
+
+
+array = []
+result = [] 
+summ = 0
+for i in range(len(sol.x)):
+
+    alpha = sol.x[i]
+    array.append(data[i][0])
+    array.append(data[i][1])
+    dot_product = linear_kernel(data[i][2]*alpha, array)
+    summ = summ + dot_product
+    result.append(dot_product)
+    array = []
+summ = summ.tolist()
+summ.append(find_wo(summ))
+print("The result is : ", result )
+print("The fin result is : ", summ )
+#print("wo ??? -> ", find_wo(summ))
+
+def decision_boundary(w):
+    if math.floor(round(w[0])) == 0 :
+        return 'y',-math.floor(round(w[2]))/math.floor(round(w[1],2))
+    elif math.floor(round(w[1])) == 0 :
+        return 'x',-round(w[2])/round(w[0],2)
+    else :
+        return 'xy',-round(w[0],2)/round(w[1],2),round(w[2],2)/round(w[1],2)
+
+print(decision_boundary(summ))
+
+x_line = arange(-2.0, 4.0, 0.1)
+y_line = arange(-2.0, 4.0, 0.1)
+print("length ----> ",len(x_line))
+xx_a = []
+yy_a = []
+xx_b = []
+yy_b = []
+for i in range(len(data)):
+    if data[i][2] == 1 :
+        xx_a.append(data[i][0])
+        yy_a.append(data[i][1])
+    else:
+        xx_b.append(data[i][0])
+        yy_b.append(data[i][1])    
+
+#
+decision = decision_boundary(summ)
+x_l = 0
+y_l = 0
+if decision[0] == 'x':
+    y_l = x_line
+    x_l = [decision[1] for x in range(len(x_line))]
+if decision[0] == 'y':
+    x_l = y_line
+    y_l = [decision[2] for x in range(len(x_line))]
+if decision[0] == 'xy':
+    x_l = x_line
+    y_l = [decision[1]*x + decision[2] for x in x_line]
+#
+
+plt.figure(1)
+plt.subplot(211)
+plt.plot(xx_a, yy_a, 'bo', xx_b, yy_b, 'r^',x_l, y_l, 'g')
+    
+plt.subplot(212)
+plt.plot(x_l, y_l, 'r')
+plt.show()
+
