@@ -33,41 +33,41 @@ import sys
 # NOTE: you do not need to handle the W argument for this part!
 # in: labels - N vector of class labels
 # out: prior - C x 1 vector of class priors
-def computePrior(labels, W=None):
-    Npts = labels.shape[0]
-    if W is None:
-        W = np.ones((Npts,1))/Npts
-    else:
-        assert(W.shape[0] == Npts)
-    #find uniquel labels
-    classes = np.unique(labels)
-    #find the number of classes
-    Nclasses = np.size(classes)
-
-    prior = np.zeros((Nclasses,1))
-    #print("prior -> ", prior)
-    # TODO: compute the values of prior for each class!
-    # ==========================
-    total = len(labels)
-    k = []
-    fin = []
-    for i in classes:
-        #clas.append(np.where(labels == i)[0])
-        temp = len(np.where(labels == i)[0])
-        k.append(temp)
-        fin.append(k)
-        k = []
-    #print("k -> ", k)
-    #print("fin -> ", fin)
-    ret = np.array(fin).reshape(-1,1)
-    rett = ret/total
-    prior = rett
-    #print("fin reshap -> ", ret)
-    #print("fin div -> ", rett)
-    
-    # ==========================
-
-    return prior
+# def computePrior(labels, W=None):
+#     Npts = labels.shape[0]
+#     if W is None:
+#         W = np.ones((Npts,1))/Npts
+#     else:
+#         assert(W.shape[0] == Npts)
+#     #find uniquel labels
+#     classes = np.unique(labels)
+#     #find the number of classes
+#     Nclasses = np.size(classes)
+# 
+#     prior = np.zeros((Nclasses,1))
+#     #print("prior -> ", prior)
+#     # TODO: compute the values of prior for each class!
+#     # ==========================
+#     total = len(labels)
+#     k = []
+#     fin = []
+#     for i in classes:
+#         #clas.append(np.where(labels == i)[0])
+#         temp = len(np.where(labels == i)[0])
+#         k.append(temp)
+#         fin.append(k)
+#         k = []
+#     #print("k -> ", k)
+#     #print("fin -> ", fin)
+#     ret = np.array(fin).reshape(-1,1)
+#     rett = ret/total
+#     prior = rett
+#     #print("fin reshap -> ", ret)
+#     #print("fin div -> ", rett)
+#     
+#     # ==========================
+# 
+#     return prior
 
 def get_specific(a,b):
     array = []
@@ -92,78 +92,78 @@ def matrix_mult(B):
 #     labels - N vector of class labels
 # out:    mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
-def mlParams(X, labels, W=None):
-    #assert(X.shape[0]==labels.shape[0])
-    Npts,Ndims = np.shape(X)
-    classes = np.unique(labels)
-    Nclasses = np.size(classes)
-    #print("unique? -> ", classes)
-    if W is None:
-        W = np.ones((Npts,1))/float(Npts)
-
-    mu = np.zeros((Nclasses,Ndims))
-    sigma = np.zeros((Nclasses,Ndims,Ndims))
-    #print("mu before -> ", mu)
-    # TODO: fill in the code to compute mu and sigma!
-    # ==========================
-    #calculation of mu
-    clas = []
-    specific =  []
-    k = 0
-    for i in classes:
-        #clas.append(np.where(labels == i)[0])
-        k = np.where(labels == i)[0]
-        array = get_specific(X,k)
-        clas.append(k)
-        specific.append(array)
-    u_means = []
-    #print("Specific --------->>>>>> ", specific)
-    #get number of features 
-    #get number of features 
-    nb = len(specific[0][0])
-    for i in range(len(specific)):
-        l = specific[i]
-        tot = np.sum(l, axis= 0)
-        tot = np.sum(l, axis= 0)/ len(specific[i])
-        s = [x for x in tot]
-        u_means.append(s)
-    mu = u_means
-    # ==========================
-    #print("mu after -> ", mu)
-    # ==========================
-    #calculation of sigma
-
-    #print("length of specific ", len(specific))
-    sigm = []
-    for i in range(len(specific)):
-        s = [ x - u_means[i] for x in specific[i]]
-        sigm.append(s)
-    
-    #print("State now -> ", sigm)
-    
-    sigms = []
-    for i in range(len(sigm)):
-        s = [ np.array(matrix_mult(x)) for x in sigm[i]]
-        sigms.append(s)
-    
-    #print("State now -> ", sigms)
-    
-    total = 0
-    sigmas = []
-    for i in range(len(sigms)):
-        long = len(sigms[i])
-        sum = 0
-        for j in range(long):
-            sum = sum + sigms[i][j]
-        sigmas.append(sum/long)
-    #print("State now sigmas func -> ", sigmas)
-    diag = [np.diag(x) for x in sigmas]
-    sd = [np.diag(d) for d in diag]
-    #print("Diag sigmas -> ", [np.diag(x) for x in sigmas] )
-    #print("Diag sigmas mat -> ", sd)
-    sigma = sd
-    # ==========================
-    return mu, sigma
+# def mlParams(X, labels, W=None):
+#     #assert(X.shape[0]==labels.shape[0])
+#     Npts,Ndims = np.shape(X)
+#     classes = np.unique(labels)
+#     Nclasses = np.size(classes)
+#     #print("unique? -> ", classes)
+#     if W is None:
+#         W = np.ones((Npts,1))/float(Npts)
+# 
+#     mu = np.zeros((Nclasses,Ndims))
+#     sigma = np.zeros((Nclasses,Ndims,Ndims))
+#     #print("mu before -> ", mu)
+#     # TODO: fill in the code to compute mu and sigma!
+#     # ==========================
+#     #calculation of mu
+#     clas = []
+#     specific =  []
+#     k = 0
+#     for i in classes:
+#         #clas.append(np.where(labels == i)[0])
+#         k = np.where(labels == i)[0]
+#         array = get_specific(X,k)
+#         clas.append(k)
+#         specific.append(array)
+#     u_means = []
+#     #print("Specific --------->>>>>> ", specific)
+#     #get number of features 
+#     #get number of features 
+#     nb = len(specific[0][0])
+#     for i in range(len(specific)):
+#         l = specific[i]
+#         tot = np.sum(l, axis= 0)
+#         tot = np.sum(l, axis= 0)/ len(specific[i])
+#         s = [x for x in tot]
+#         u_means.append(s)
+#     mu = u_means
+#     # ==========================
+#     #print("mu after -> ", mu)
+#     # ==========================
+#     #calculation of sigma
+# 
+#     #print("length of specific ", len(specific))
+#     sigm = []
+#     for i in range(len(specific)):
+#         s = [ x - u_means[i] for x in specific[i]]
+#         sigm.append(s)
+#     
+#     #print("State now -> ", sigm)
+#     
+#     sigms = []
+#     for i in range(len(sigm)):
+#         s = [ np.array(matrix_mult(x)) for x in sigm[i]]
+#         sigms.append(s)
+#     
+#     #print("State now -> ", sigms)
+#     
+#     total = 0
+#     sigmas = []
+#     for i in range(len(sigms)):
+#         long = len(sigms[i])
+#         sum = 0
+#         for j in range(long):
+#             sum = sum + sigms[i][j]
+#         sigmas.append(sum/long)
+#     #print("State now sigmas func -> ", sigmas)
+#     diag = [np.diag(x) for x in sigmas]
+#     sd = [np.diag(d) for d in diag]
+#     #print("Diag sigmas -> ", [np.diag(x) for x in sigmas] )
+#     #print("Diag sigmas mat -> ", sd)
+#     sigma = sd
+#     # ==========================
+#     return mu, sigma
 
 ####------------------------------ VERSION 2 -------------------------------------
 
@@ -172,9 +172,11 @@ def mlParams(X, labels, W=None):
 #     labels - N vector of class labels
 # out:    mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
-def mlParams2(X, labels, W=None):
+def mlParams(X, labels, W=None):
     #assert(X.shape[0]==labels.shape[0])
     Npts,Ndims = np.shape(X)
+    print("Npts ",Npts )
+    print("Ndims ",Ndims)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
     #print("unique? -> ", classes)
@@ -280,7 +282,7 @@ def mlParams2(X, labels, W=None):
 
 
 # out: prior - C x 1 vector of class priors
-def computePrior2(labels, W=None):
+def computePrior(labels, W=None):
     Npts = labels.shape[0]
     if W is None:
         W = np.ones((Npts,1))/Npts
@@ -331,16 +333,19 @@ def computePrior2(labels, W=None):
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #change 
 #
-
-X, labels = genBlobs(n_samples = 6 ,centers=2)
-print("Data X ", X)
-print("Class -> ", labels)
-#X = [[0,4],[1,1],[3,3],[4,0],[4,0],[7,1],[8,4],[5,3]]
-#X = np.array(X)
-#labels = [0,0,0,0,1,1,1,1]
-
-
-#TODO : JFFKFK +
+# #todo: fhdfjjfffffffffffffff fjfjfjjjj djdfjf
+# X, labels = genBlobs(n_samples = 6 ,centers=2)
+# print("Data X ", X)
+# print("Class -> ", labels)
+# cl, alph = trainBoost(BayesClassifier, X, labels, T=10)
+# print("classifiers ", cl)
+# print("Alphas -> ", alph)
+# #X = [[0,4],[1,1],[3,3],[4,0],[4,0],[7,1],[8,4],[5,3]]
+# #X = np.array(X)
+# #labels = [0,0,0,0,1,1,1,1]
+# 
+# 
+# #TODO : JFFKFK + tghhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 #
 #change 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -382,15 +387,17 @@ def classifyBayes(X, prior, mu, sigma):
         ssf.append(np.array(ss))
     # ==========================
     #print("classsybayes(1111) V x -> ", ssf)
-    print("ln_pk ", ln_pk)
+    #print("ln_pk ", ln_pk)
     #print("ln_sigmak ", ln_sigmak)
     #ssf = [ (y + np.array(ln_sigmak) + np.array(ln_pk)).tolist() for y in ssf]
     ssf = [ y + np.array(ln_sigmak) + np.array(ln_pk) for y in ssf]
     #print("classsybayes(2222) V x -> ", ssf)
     logProb = ssf
+    #print("logprob fdffdfddf-> ", logProb)
     # one possible way of finding max a-posteriori once
     # you have computed the log posterior
     h = np.argmax(logProb,axis=1)
+    #print("hhhhhhhhh -> ", h)
     return h
 
 
@@ -426,14 +433,14 @@ r = 1 / r
 #r = r.reshape(-1,1)
 #mu, sigma = mlParams(X,labels)
 #print("mu 1 ", mu ," sigma 1 " , sigma)
-mu, sigma = mlParams2(X,labels,r)
-print("mu 2 ", mu ," sigma 2 " , sigma)
+#mu, sigma = mlParams(X,labels,r)
+#print("mu 2 ", mu ," sigma 2 " , sigma)
 
 #plotGaussian(X,labels,mu,sigma)
-rer = computePrior(labels)
-print("comp prior (1) -> ", rer, " SUM UP TO (1) : ", np.sum(rer))
-rer = computePrior2(labels, r)
-print("comp prior (2) -> ", rer, " SUM UP TO (2) : ", np.sum(rer))
+#rer = computePrior(labels)
+#print("comp prior (1) -> ", rer, " SUM UP TO (1) : ", np.sum(rer))
+# rer = computePrior(labels, r)
+# print("comp prior (2) -> ", rer, " SUM UP TO (2) : ", np.sum(rer))
 # print("mu mu : ", mu)
 # print("sigmas -> ", sigma)
 # Npts = X.shape[0]
@@ -445,9 +452,9 @@ print("comp prior (2) -> ", rer, " SUM UP TO (2) : ", np.sum(rer))
 # print("The data : ", X)
 # print("The labesl : ", labels)
 # print("classified by bayes ? -> ", h)
-Y = np.array([[1,5],[2,2]])
-h_y = classifyBayes(Y,rer,mu,sigma)
-print(Y," classified by bayes ? -> ", h_y)
+#Y = np.array([[1,5],[2,2]])
+#h_y = classifyBayes(Y,rer,mu,sigma)
+#print(Y," classified by bayes ? -> ", h_y)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
@@ -523,26 +530,32 @@ def trainBoost(base_classifier, X, labels, T=10):
         actual = labels
         error, error_vec = computer_error(wCur,labels,vote)
         
-        if error == 0.0:
-            continue
+        # if error == 0.0:
+        #     continue
+        
         #very small number to make sure that we do not divide by 0
         delta = sys.float_info.epsilon
         #compute the alphas 
-        alpha = (1.0/2)*(np.log( (1 - error) / (error + delta) ))
-        
+        alpha = (0.5)*(np.log( (1 - error) / (error + delta) ))
+        div = (1 - error) / (error + delta)
+        print("alpha HERE HERE ", alpha)
         #update the weights
-        temp_weight = np.zeros(Npts)
-        for j in range(len(error_vec)):
-            if error_vec[j] == 1 :
-                temp_weight[j] = wCur[j]*np.exp(-alpha)
-            else:
+        temp_weight = np.zeros((len(wCur),1))
+        #classifiers.append(base_classifier.trainClassifier(X, labels, wCur))
+        for j in range(len(wCur)):
+            if error_vec[j] != 0 :
                 temp_weight[j] = wCur[j]*np.exp(alpha)
-        
+            else:
+                temp_weight[j] = wCur[j]*np.exp(-alpha)
+        print("temp_weigth -----> ", temp_weight)
         #normalization of the weight 
         wCur = temp_weight/np.sum(temp_weight)
+        print("temp_weigth 2 -----> ", wCur)
+            
+            
         alphas.append(alpha) # you will need to append the new alpha
         # ==========================
-        print("Begin ------------------------------")
+        print("Begin -----------------------------")
         print("The iteration number : ", i_iter)
         print("Actual ", actual)
         print("predicted class : ", vote)
@@ -559,9 +572,9 @@ def computer_error(W, true_val, predicted_val):
     error = 0
     error_vec = []
     
-    for i in range(true_val):
-        diff = true_val[i] != predicted_val[i]
-        error = error + W[i]*diff
+    for i in range(len(true_val)):
+        diff = predicted_val[i] != true_val[i]
+        error = error + W[i]*(diff)
         error_vec.append(diff)
         
     return error, error_vec
@@ -586,7 +599,20 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-        
+        # for i in range(Npts):
+        #     scores = all_class(X[i],classifiers,alphas,Nclasses)
+        #     votes[i] = scores
+        #     print("data ", X[i], " votes ", scores)
+        result = []
+        for i in range(len(classifiers)):
+            temp_X = classifiers[i].classify(X)
+            for k in range(len(temp_X)):
+                for j in range(Nclasses):
+                    vj_xk = alphas[i]*(temp_X[k] == j)
+                    votes[k][j] = votes[k][j] + vj_xk
+            result.append(temp_X)
+        print("The result for each classifiers", result)
+        print("All votes -> ", votes)
         # ==========================
 
         # one way to compute yPred after accumulating the votes
@@ -595,6 +621,29 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
 
 # The implemented functions can now be summarized another classifer, the `BoostClassifier` class. This class enables boosting different types of classifiers by initializing it with the `base_classifier` argument. No need to add anything here.
 
+#compute the score for one data point for each classifiers 
+#for each classes concerned
+# def all_class(x1,classifiers, alphas, Nclass):
+#     
+#     pred = []
+#     for i in range(Nclass):
+#         score = one_class(x1,classifiers, alphas,i)
+#         pred.append(np.sum(score))
+#         #print("----|||||||||||| Point ", x1, " class ", i , " votes ", score)
+#     return pred
+    
+#compute the score for one data point for each classifiers 
+#regarding class Cl
+# def one_class(x1,classifiers, alphas, cl):
+#    
+#     Ncomps = len(classifiers)
+#     score = 0
+#     #iterate over all the classifiers for class cl prediction
+#     for i in range(Ncomps):
+#         diff = classifiers[i].classify(x1)
+#         diff = sum(diff)
+#         score = score + alphas[i]*(diff == cl)
+#     return score
 
 # NOTE: no need to touch this
 class BoostClassifier(object):
@@ -614,10 +663,52 @@ class BoostClassifier(object):
         return classifyBoost(X, self.classifiers, self.alphas, self.nbr_classes)
 
 
+#todo: fhdfjjfffffffffffffff fjfjfjjjj djdfjf
+# X, labels = genBlobs(n_samples = 10 ,centers=2)
+# X = np.array(X)
+# print("Data X ", X)
+# print("Class -> ", labels)
+# cl, alph = trainBoost(BayesClassifier(), X, labels, T=10)
+# print("classifiers ", cl)
+# print("Alphas -> ", alph)
+# #maxt = classifyBoost(X, cl, alph, 2)
+# # classifyBoost(X, classifiers, alphas, Nclasses):
+# prediction = classifyBoost(X, cl, alph, 2)
+# print("boosting result = ", prediction)
+# # X = [[0,4],[1,1],[3,3],[4,0],[4,0],[7,1],[8,4],[5,3]]
+# # X = np.array(X)
+# # labels = [0,0,0,0,1,1,1,1]
+
+
+#TODO : JFFKFK + tghhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+
+
 # ## Run some experiments
 # 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
+def print_xls2(name,filename, datas):
+    
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet(name)
+    ws.write(0,0,'split fraction')
+    ws.write(0,1,' mean accuracy ')
+    ws.write(0,2,' std ')
+    
+    i = 1
+    split_array = [0.3,0.5,0.6,0.7,0.8]
+    #datas = 'iris'
+    for j in split_array:
+        mean, std = testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset=datas,split=j)
+        #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset=datas,split=j)
+        ws.write(i,0,j) # Row, Column, Data.
+        ws.write(i,1,mean)
+        ws.write(i,2,std)
+        i += 1
+    wb.save(filename)
+
+print_xls2('sheet 1','iris_databoost.xls','iris')
+print_xls2('sheet 1','vowel_databoost.xls','vowel')
 
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
@@ -628,6 +719,7 @@ class BoostClassifier(object):
 
 
 #plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+
 
 
 # Now repeat the steps with a decision tree classifier.
